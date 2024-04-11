@@ -46,43 +46,28 @@ else:
 
 ### Idea
 
-If we list possible sequences sorted alphabetically and group them by their length we see that we have:
+After some time I learned that what I used in fact is Zackendorf's Theorem: https://en.wikipedia.org/wiki/Zeckendorf%27s_theorem
+Theorem states that any positive integer can be uniquely represented as a sum of distinct fibonnaci numbers in such way that any two elements of the sum are not consecutive Fibonacci numbers.
+Which can be 1:1 transfered to our problem! We will just consider any sequence to be binary Zackendorf representation. Therefore sequences will transfer accordingly to numbers ($F_1 = 1$, $F_2 = 2$):
+$$(0100101)_2 \rightarrow F_2 + F_5 + F_7 = 2 + 8 + 21 = 31$$
+$$(1010000)_2 \rightarrow F_1 + F_3= 1 + 3 = 4$$
+And because of properties of Fibonacci ordered representations will be growing series! Therefore (least bit last):
+$$a_0 = (0000000)_2 \rightarrow 0$$
+$$a_1 = (0000001)_2 \rightarrow 1$$
+$$a_2 = (0000010)_2 \rightarrow 2$$
+$$a_3 = (0000100)_2 \rightarrow 3$$
+$$a_4 = (0000101)_2 \rightarrow 4$$
+$$a_5 = (0001000)_2 \rightarrow 5$$
+$$a_6 = (0001001)_2 \rightarrow 6$$
+$$a_6 = (0001010)_2 \rightarrow 7$$
+$$ \cdots $$
 
-* 1 "0" length sequence - "0"   Or $[0...0]$   
-* 1 "1" length sequence - 1 Or $[0...0]1$
-* 1 "2" length sequences - 10 Or $[0...0]10$
-* 2 "3" length sequences - 100 and 101 Or $[0...0]100$, $[0...0]101$ 
-
-and etc. As we can see each sequence of length exactly 3 is created by appending sequence of length less than 2 to a "10":
-
-* 100 is created by appending $[0...0]$ to "10" (in this case 0)
-* 101 is created by appending $[0...0]1$ to "10" (in this case 1)
-
-similarly for sequences of length exactly 5 we would get
-
-* 10000 is created by appennding $[0...0]$ to "10" (in this case 000) 
-* 10001 is created by appennding $[0...0]1$ to "10" (in this case 001) 
-* 10010 is created by appennding $[0...0]10$ to "10" (in this case 010) 
-* 10100 is created by appennding $[0...0]100$ to "10" (in this case 100) 
-* 10101 is created by appennding $[0...0]101$ to "10" (in this case 101) 
-
-So if we as $a_{n}$ - number of legal sequences of length **n or less** we can see that:
-
-$$a_{0} = 1$$
-$$a_{1} = 1$$
-$$a_{n+2} = a_{n+1} + a_{n}$$ 
-
-So know for each $K$ and $N$ we get we can determine that:
-
-1. If $K > a_{N}$ then solution does not exist
-2. Otherwise we can find $i$ such that $a_{i} >= K > a_{i-1}$, then we know that sequence is in form of [0...0]10[S] where S sequence is of length lesser or equal to i-2 and should be represented as i-2 length string 
-3. S in above point can be found recursively for any $N, K$ if $solution(N, K) = [0...0]10[S]$ - from point 2 then $S = solution(i-2, K-a_{i-1})$
-
-Third point is derived from observation that if we are looking exactly i-length sequence that is K-th sequence alphabetically than $K = a_{i-1} + t$ where $t$ is positive integer and therefore is represented as $[0...0]10[S]$ where $S$ is $t$-th sequence (of course $t = K - a_{i-1}$ so $0 < t <= a_{i} - a_{i-1} = a_{i-2}$, and S should be represented by $i-2$ length sequence)
+Therefore our problem is simplified to finding Zackendorf representation of the number $K$. To check if its representation is no longer than $N$ bits we only need to check if $K < F_{N+1}$ as smallest number with representation of length $N+1$ will be $F_{N+1}.
 
 ### Algorithm
+```
 
-...
+```
 
 ## Acknowlegments
 
