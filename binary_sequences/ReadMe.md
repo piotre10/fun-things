@@ -1,6 +1,7 @@
 ## Problem
 
-For any natural numbers N and K. Consider all N-element binary sequences such that there are no neighbouring 1's. Find K-th sequence such sequence.
+For any natural numbers N and K. Consider all N-element binary sequences such that there are no neighbouring 1's. Find K-th sequence such sequence (alphabetically).
+If there is no such sequence (K is to large) return empty string
 
 Originally as a programming exercise boundary's for N and K was: $1 \leq N \leq 63$ and $1 \leq K \leq 100000$
 
@@ -21,6 +22,7 @@ Similarly for $N=7$ and $K=10$ correct answear would be $0010001$
 
 ## "Easy" solution
 
+### Idea and algorithm
 Let's think of binary sequences as binary representations of integers then:
 
 for each integer i starting from 0 we can check if it's binary representation is legal. If it is legal we increment some variable k, when k = K we break out and binary representation of i is our sequence. Algorithmically:
@@ -41,6 +43,14 @@ if i < 2^N:
 else:
     print('There is no {K}-th sequence for given N (K is to big)')
 ```
+### Time complexity
+Time complexity of this solution is limitted by number of all binary sequences smaller than K'th legal sequence. As we will see if $K = F_n$ than $K$'tk legal sequence is exactly $2^n$ sequence. From following identity for fibonacci numbers ($\varphi \approx 1.618$):
+$$ F_n = \frac{\varphi^n - (-\varphi)^{-n}}{\sqrt{5}}$$
+we see that $F_n = O(\varphi^n)$ and time complexity for $K = F_n$ is $O(2^n)$ Therefore:
+$$K \approx \varphi^n \Rightarrow \log_{\varphi}{K} \approx n \Rightarrow \frac{\log_2{K}}{log_2{\varphi}} = C\log_2{K} \approx n$$
+Where $C > 1$ therefore for $K = F_n$ time complexity is $O(2^n) = O(2^CK) = O(K)$
+
+And if $K$ is to big to fit in $N$ digit sequence time complexity for discovering it is $O(2^N)$
 
 ## Solution using fibonnaci sequence
 
@@ -62,13 +72,44 @@ $$a_6 = (0001001)_2 \rightarrow 6$$
 $$a_6 = (0001010)_2 \rightarrow 7$$
 $$ \cdots $$
 
-Therefore our problem is simplified to finding Zackendorf representation of the number $K$. To check if its representation is no longer than $N$ bits we only need to check if $K < F_{N+1}$ as smallest number with representation of length $N+1$ will be $F_{N+1}.
+Therefore our problem is simplified to finding Zackendorf representation of the number $K$. To check if its representation is no longer than $N$ bits we only need to check if $K < F_{N+1}$ as smallest number with representation of length $N+1$ will be $F_{N+1}$.
 
 ### Algorithm
 ```
+fib_numbers = generate_fibonnacci_sequence(N+1)
 
+if K-1 >= fib_numbers[-1]:
+    number_is_to_big()
+else:
+    find_zackendorf_decomposition(K-1)
 ```
+Where finding zackendorf decomposition looks like this:
+```
+res = ""
+rem = K-1
+skip_next = False
+for fib in fibonnacci_sequence_reversed:
+    if skip_next:
+        res += "0"
+        skip_next = False
+    if fib <= rem:
+        rem -= fib
+        res += "1"
+        skip_next = True
+    else:
+        res += "0"
+```
+
+### Time Complexity
+
+Time complexity of generating fibonacci sequence is $O(N)$ finding zackendorf decomposition is also $O(N)$ so whole algorithm is $O(N)$.
+
+
+## Notes
+
+* Improvement from $O(K)$ to $O(N)$ can be significant as usually $N << K$. In fact as we have seen above theoretical upper bound for $K$ with given $N$ is $O(\varphi^N)$. So for large K and N it is practically exponential to linear.
 
 ## Acknowlegments
 
+* Problem was originally sent to me by one of my friends, it was part of one of the programming classes at AGH university
 * Idea and implementation of fibonnaci solution was created by me
